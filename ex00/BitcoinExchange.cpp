@@ -1,8 +1,34 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   BitcoinExchange.cpp                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mkhairou <mkhairou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/08/23 11:21:38 by mkhairou          #+#    #+#             */
+/*   Updated: 2023/08/23 11:24:57 by mkhairou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "BitcoinExchange.hpp"
 
 BitcoinExchange::BitcoinExchange() {}
 
 BitcoinExchange::~BitcoinExchange() {}
+
+BitcoinExchange::BitcoinExchange(BitcoinExchange const &cpy)
+{
+    *this = cpy;
+}
+
+BitcoinExchange& BitcoinExchange::operator=(const BitcoinExchange &obj)
+{
+    if (this != &obj)
+    {
+        _map = obj._map;
+    }
+    return *this;
+}
 
 int BitcoinExchange::month_date(int year, int month)
 {
@@ -19,7 +45,7 @@ int BitcoinExchange::month_date(int year, int month)
         return 31;
 }
 
-int BitcoinExchange::get_price(std::string date)
+double BitcoinExchange::get_price(std::string date)
 {
     std::map<std::string, double>::iterator it = _map.lower_bound(date);
     if (it != _map.begin())
@@ -79,17 +105,21 @@ int BitcoinExchange::check_line(std::string key, int indecator)
         price.erase(std::remove(price.begin(), price.end(), ' '), price.end());
     }
     if (date == "" || price == "")
-        return 1;
+        throw std::invalid_argument("Error: Bad input");
     char *not_digit;
-    double date_d = strtod(date.c_str(), &not_digit);
+    strtod(date.c_str(), &not_digit);
     if (*not_digit != '\0' && *not_digit != '-')
-        return 1;
+        throw std::invalid_argument("Error: Bad date input");
     if (check_date(date))
-        return 1;
+        throw std::invalid_argument("Error: Bad date input");
     char *leftover;
     double price_d = strtod(price.c_str(), &leftover);
-    if (*leftover != '\0' || price_d < 0 || price_d > 1000)
-        return 1;
+    if (*leftover != '\0')
+        throw std::invalid_argument("Error: Bad price input");
+    if (price_d < 0)
+        throw std::invalid_argument("Error: too large a number");
+    if (price_d > 1000 && indecator == 0)
+        throw std::invalid_argument("Error: too large a number");
     return 0;
 }
 
@@ -100,10 +130,12 @@ void BitcoinExchange::read_data(std::string filename)
     std::ifstream myfile(filename.c_str());
     if (myfile.is_open())
     {
+        std::getline(myfile, line);
         while (std::getline(myfile, line))
         {
-            if (check_line(line, 0) == 0)
+            try
             {
+                check_line(line, 0);
                 std::stringstream ss(line);
                 std::string date;
                 std::string price;
@@ -111,15 +143,15 @@ void BitcoinExchange::read_data(std::string filename)
                 ss >> price;
                 ss >> price;
                 std::cout << date + "=> " + price + " = ";
-                int total = get_price(date);
+                double total = get_price(date);
 
-                std::cout << total * std::atoi(price.c_str()) << std::endl;
+                std::cout << total * std::strtod(price.c_str(), NULL) << std::endl;
             }
-            else
+            catch(const std::exception& e)
             {
-                std::cerr << "Invalid line" << std::endl;
-                exit(1);
+                std::cerr << e.what() << '\n';
             }
+
         }
         myfile.close();
     }
@@ -129,17 +161,19 @@ void BitcoinExchange::read_data(std::string filename)
     }
 }
 
-void BitcoinExchange::read_file(std::string filename)
+void BitcoinExchange::read_file()
 {
     std::string line;
 
-    std::ifstream myfile(filename.c_str());
+    std::ifstream myfile("data.csv");
     if (myfile.is_open())
     {
+        std::getline(myfile, line);
         while (std::getline(myfile, line))
         {
-            if (check_line(line, 1) == 0)
+            try
             {
+                check_line(line, 1);
                 std::stringstream ss(line);
                 std::string date;
                 std::string price;
@@ -149,9 +183,10 @@ void BitcoinExchange::read_file(std::string filename)
                 price.erase(std::remove(price.begin(), price.end(), ' '), price.end());
                 _map.insert(std::pair<std::string, double>(date, std::strtod(price.c_str(), NULL)));
             }
-            else
+            catch(const std::exception& e)
             {
-                std::cerr << "Invalid line" << std::endl;
+                std::cerr << "data base ";
+                std::cerr << e.what() << '\n';
                 exit(1);
             }
         }

@@ -1,30 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   RPN.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mkhairou <mkhairou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/23 11:21:44 by mkhairou          #+#    #+#             */
-/*   Updated: 2023/08/23 11:21:45 by mkhairou         ###   ########.fr       */
+/*   Created: 2023/08/23 11:21:54 by mkhairou          #+#    #+#             */
+/*   Updated: 2023/08/23 14:35:18 by mkhairou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "BitcoinExchange.hpp"
+#ifndef RPN_HPP
+#define RPN_HPP
 
-int main(int argc, char const *argv[])
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <sstream>
+#include <stack>
+
+class RPN
 {
-    if (argc != 2)
-    {
-        std::cerr << "usage: ./bitcoin [file]" << std::endl;
-    }
-    else
-    {
-        std::string filename = argv[1];
-        BitcoinExchange b;
-        b.read_file();
-        b.read_data(filename);
-    }
+private:
+	void CheckInput(std::string tmp);
+	std::stack<float> _stack;
+	std::string _input;
+public:
+	void readInput(std::string input);
+	void calculate();
+	RPN(/* args */);
+	RPN(RPN const &cpy);
+	RPN &operator=(RPN const &cpy);
+	~RPN();
+};
 
-    return 0;
-}
+
+
+#endif

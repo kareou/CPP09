@@ -1,30 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   PmergeMe.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mkhairou <mkhairou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/23 11:21:44 by mkhairou          #+#    #+#             */
-/*   Updated: 2023/08/23 11:21:45 by mkhairou         ###   ########.fr       */
+/*   Created: 2023/08/23 14:33:25 by mkhairou          #+#    #+#             */
+/*   Updated: 2023/08/23 15:57:32 by mkhairou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "BitcoinExchange.hpp"
+#ifndef PMERGEME_HPP
+# define PMERGEME_HPP
 
-int main(int argc, char const *argv[])
-{
-    if (argc != 2)
-    {
-        std::cerr << "usage: ./bitcoin [file]" << std::endl;
-    }
-    else
-    {
-        std::string filename = argv[1];
-        BitcoinExchange b;
-        b.read_file();
-        b.read_data(filename);
-    }
+# include <iostream>
+# include <string>
+# include <algorithm>
+# include <vector>
+#include <sstream>
+#include<ctime>
 
-    return 0;
-}
+void check_args(std::string input);
+void fill_vector(std::vector<double> &v, std::string input);
+void sort_vector(std::vector<double> &v);
+
+#endif

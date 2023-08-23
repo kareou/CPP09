@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   BitcoinExchange.hpp                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mkhairou <mkhairou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/08/23 11:21:41 by mkhairou          #+#    #+#             */
+/*   Updated: 2023/08/23 11:23:24 by mkhairou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef BITCOINEXCHANGE_HPP
 #define BITCOINEXCHANGE_HPP
 
@@ -16,13 +28,15 @@ private:
     int check_date(std::string date);
     int month_date(int year, int month);
     int check_line(std::string key, int indecator);
-    int get_price(std::string date);
+    double get_price(std::string date);
 public:
     void read_data(std::string filename);
-    void read_file(std::string filename);
-    BitcoinExchange(/* args */);
+    void read_file();
+    BitcoinExchange();
+    BitcoinExchange(BitcoinExchange const &cpy);
+    BitcoinExchange &operator=(BitcoinExchange const &cpy);
     ~BitcoinExchange();
 };
 
 
-#endif 
+#endif
