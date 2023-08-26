@@ -6,7 +6,7 @@
 /*   By: mkhairou <mkhairou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/23 14:33:15 by mkhairou          #+#    #+#             */
-/*   Updated: 2023/08/24 16:27:47 by mkhairou         ###   ########.fr       */
+/*   Updated: 2023/08/26 16:08:17 by mkhairou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,14 +35,14 @@ int main(int ac, char **av)
     clock_t vend = clock();
     clock_t lstart = clock();
 	fill_list(list, input);
-	sort_list(list);
+	// sort_list(list);
     clock_t lend = clock();
 	std::cout << "After:\t";
 	for(std::vector<int>::iterator it = vec.begin(); it != vec.end(); ++it)
 		std::cout << *it << (it + 1 == vec.end() ? "\n" : " ");
 	 double vtimer = static_cast<double>(vend - vstart) / CLOCKS_PER_SEC;
 	 double ltimer = static_cast<double>(lend - lstart) / CLOCKS_PER_SEC;
-	std::cout << "Time to process a range of "<< vec.size() <<" elements with std::vector" << vtimer * 1000000  << "s\n";
-	std::cout << "Time to process a range of "<< list.size() <<" elements with std::vector" << ltimer * 1000000 << "s\n";
+	std::cout << "Time to process a range of "<< vec.size() <<" elements with std::vector " << vtimer * 1000000  << "s\n";
+	std::cout << "Time to process a range of "<< list.size() <<" elements with std::vector " << ltimer * 1000000 << "s\n";
 	return 0;
 }
