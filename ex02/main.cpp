@@ -6,7 +6,7 @@
 /*   By: mkhairou <mkhairou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/23 14:33:15 by mkhairou          #+#    #+#             */
-/*   Updated: 2023/08/26 16:08:17 by mkhairou         ###   ########.fr       */
+/*   Updated: 2023/08/27 13:05:18 by mkhairou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,9 @@ int main(int ac, char **av)
 	std::cout << "After:\t";
 	for(std::vector<int>::iterator it = vec.begin(); it != vec.end(); ++it)
 		std::cout << *it << (it + 1 == vec.end() ? "\n" : " ");
-	 double vtimer = static_cast<double>(vend - vstart) / CLOCKS_PER_SEC;
-	 double ltimer = static_cast<double>(lend - lstart) / CLOCKS_PER_SEC;
-	std::cout << "Time to process a range of "<< vec.size() <<" elements with std::vector " << vtimer * 1000000  << "s\n";
-	std::cout << "Time to process a range of "<< list.size() <<" elements with std::vector " << ltimer * 1000000 << "s\n";
+	 double vtimer = static_cast<double>(vend - vstart);
+	 double ltimer = static_cast<double>(lend - lstart);
+	std::cout << "Time to process a range of "<< vec.size() <<" elements with std::vector " << vtimer  << "us\n";
+	std::cout << "Time to process a range of "<< list.size() <<" elements with std::vector " << ltimer << "us\n";
 	return 0;
 }
