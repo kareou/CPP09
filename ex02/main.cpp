@@ -35,7 +35,7 @@ int main(int ac, char **av)
     clock_t vend = clock();
     clock_t lstart = clock();
 	fill_list(list, input);
-	// sort_list(list);
+	sort_list(list);
     clock_t lend = clock();
 	std::cout << "After:\t";
 	for(std::vector<int>::iterator it = vec.begin(); it != vec.end(); ++it)

@@ -52,20 +52,20 @@ void fill_list(std::list<int> &l, std::string input)
 	}
 }
 
-void sort_peers(std::vector<std::vector<int> > &v, size_t i = 0) {
-    if (i == v.size() - 1)
-        return;
-    else
-	{
-        if (v[i][1] > v[i + 1][1])
-		{
+void sort_peers(std::vector<std::vector<int> > &v, size_t start = 0) {
+    bool swapped = false;
+    for (size_t i = start; i < v.size() - 1; i++) {
+        if (v[i][1] > v[i + 1][1]) {
             std::swap(v[i], v[i + 1]);
-            sort_peers(v, 0);
+            swapped = true;
         }
-        else
-            sort_peers(v, i + 1);
+    }
+    // only recurse if a swap occurred in the last pass
+    if (swapped) {
+        sort_peers(v);
     }
 }
+
 
 
 void merge_peers(std::vector<std::vector<int> > &v)
@@ -104,7 +104,6 @@ void ford_insertion_sort(std::vector<int> &max_peers,std::vector<int> &small_pee
 			jac[i] = small_peers.size() - 1;
 			stop = true;
 		}
-
 		for (int j = jac[i]; j > jac[i - 1]; j--) 
 		{
 			std::vector<int>::iterator it = std::upper_bound(max_peers.begin(), max_peers.end(), small_peers[j]);
@@ -117,6 +116,15 @@ void ford_insertion_sort(std::vector<int> &max_peers,std::vector<int> &small_pee
 
 void sort_vector(std::vector<int> &v)
 {
+	int trashhold = -1;
+	if(v.size() == 1)
+		return;
+	if(v.size() % 2 != 0)
+	{
+		trashhold = v[v.size() - 1];
+		v.pop_back();
+	}
+
 	std::vector<std::vector<int> > vec;
 	for (std::vector<int>::iterator it = v.begin(); it != v.end(); it += 2)
 	{
@@ -142,25 +150,92 @@ void sort_vector(std::vector<int> &v)
 	}
 	ford_insertion_sort(res, small_peers);
 	v = res;
+	if(trashhold != -1)
+	{
+		std::vector<int>::iterator it = std::upper_bound(v.begin(), v.end(), trashhold);
+		v.insert(it, trashhold);
+	}
 }
 
-// void sort_list(std::list<int> &l)
-// {
-// 	if(l.size() >=  14)
-// 	{
-// 		insertion_sort(l);
-// 		return;
-// 	}
-// 	std::list<int>::iterator mid = l.begin();
-// 	std::advance(mid, l.size() / 2);
+void insertion_sort_l(std::list<int> &l, std::list<int> &small_peers)
+{
+	std::list<int>::iterator it = small_peers.begin();
+	std::advance(it, 1);
+	std::list<int>::iterator it2 = std::upper_bound(l.begin(), l.end(), *it);
+	l.insert(it2, *it);
 
-// 	std::list<int> first_half(l.begin(), mid);
-// 	std::list<int> second_half(mid, l.end());
+	std::vector<int> jac;
+	for (size_t i = 2; i < small_peers.size(); i++)
+	{
+		jac.push_back(jacobstal_number(i));
+	}
+	bool stop = false;
+	for (size_t i = 1; i < jac.size(); i++)
+	{		
+		if(jac[i] >= (int)small_peers.size())
+		{
+			jac[i] = small_peers.size() - 1;
+			stop = true;
+		}
+		for (int j = jac[i]; j > jac[i - 1]; j--) 
+		{
+			std::list<int>::iterator it_tmp = small_peers.begin();
+			std::advance(it_tmp, j);
+			std::list<int>::iterator it = std::upper_bound(l.begin(), l.end(), *it_tmp);
+			l.insert(it, *it_tmp);
+		}
+		if(stop)
+			break;
+	}
 
-// 	sort_list(first_half);
-// 	sort_list(second_half);
+}
 
-// 	std::list<int> res;
-// 	std::merge(first_half.begin(), first_half.end(), second_half.begin(), second_half.end(), std::back_inserter(res));
-// 	l = res;
-// }
+void sort_list(std::list<int> &l)
+{
+	int trashhold = -1;
+
+	if(l.size() == 1)
+		return;
+	if(l.size() % 2 != 0)
+	{
+		std::list<int>::iterator it = l.begin();
+		std::advance(it, l.size() - 1);
+		trashhold = *it;
+		l.erase(it);
+	}
+	std::list<std::list<int> > list;
+	for (std::list<int>::iterator it = l.begin(); it != l.end(); it++)
+	{
+		std::list<int> tmp;
+		tmp.push_back(*it);
+		tmp.push_back(*(++it));
+		list.push_back(tmp);
+	}
+	//sort each pair
+	for (std::list<std::list<int> >::iterator it = list.begin(); it != list.end(); it++)
+	{
+		if(it->front() > it->back())
+			std::swap(it->front(), it->back());
+	}
+	//sort the pairs
+	list.sort();
+	//merge the pairs
+	std::list<int> res;
+	std::list<int> small_peers;
+	for (std::list<std::list<int> >::iterator it = list.begin(); it != list.end(); it++)
+	{
+		if(it == list.begin())
+			res.push_back(it->front());
+		res.push_back(it->back());
+		small_peers.push_back(it->front());
+	}
+	//insertion sort
+	insertion_sort_l(res, small_peers);
+	l = res;
+	if(trashhold != -1)
+	{
+		std::list<int>::iterator it = std::upper_bound(l.begin(), l.end(), trashhold);
+		l.insert(it, trashhold);
+	}
+	
+}
