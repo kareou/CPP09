@@ -52,18 +52,21 @@ void fill_list(std::list<int> &l, std::string input)
 	}
 }
 
-void sort_peers(std::vector<std::vector<int> > &v)
-{
-	size_t i;
-	for (i = 0; i < v.size() - 1; i++)
+void sort_peers(std::vector<std::vector<int> > &v, size_t i = 0) {
+    if (i == v.size() - 1)
+        return;
+    else
 	{
-		if(v[i][1] > v[i + 1][1])
+        if (v[i][1] > v[i + 1][1])
 		{
-			std::swap(v[i], v[i + 1]);
-			i = 0;
-		}
-	}
+            std::swap(v[i], v[i + 1]);
+            sort_peers(v, 0);
+        }
+        else
+            sort_peers(v, i + 1);
+    }
 }
+
 
 void merge_peers(std::vector<std::vector<int> > &v)
 {
@@ -79,37 +82,63 @@ void merge_peers(std::vector<std::vector<int> > &v)
 	merge_peers(v);
 }
 
+int jacobstal_number(int n)
+{
+	return (std::pow(2, n) - std::pow(-1, n)) / 3;
+}
 
 void ford_insertion_sort(std::vector<int> &max_peers,std::vector<int> &small_peers)
 {
-	
+	std::vector<int> jac;
+	std::vector<int>::iterator it = std::upper_bound(max_peers.begin(), max_peers.end(), small_peers[1]);
+	max_peers.insert(it, small_peers[1]);
+	for (size_t i = 2; i < small_peers.size(); i++)
+	{
+		jac.push_back(jacobstal_number(i));
+	}
+	bool stop = false;
+	for (size_t i = 1; i < jac.size(); i++)
+	{		
+		if(jac[i] >= (int)small_peers.size())
+		{
+			jac[i] = small_peers.size() - 1;
+			stop = true;
+		}
+
+		for (int j = jac[i]; j > jac[i - 1]; j--) 
+		{
+			std::vector<int>::iterator it = std::upper_bound(max_peers.begin(), max_peers.end(), small_peers[j]);
+			max_peers.insert(it, small_peers[j]);
+		}
+		if(stop)
+			break;
+	}
 }
 
 void sort_vector(std::vector<int> &v)
 {
 	std::vector<std::vector<int> > vec;
-	for (size_t i = 0; i < v.size(); i += 2)
+	for (std::vector<int>::iterator it = v.begin(); it != v.end(); it += 2)
 	{
 		std::vector<int> tmp;
-		tmp.push_back(v[i]);
-		tmp.push_back(v[i + 1]);
+		tmp.push_back(*it);
+		tmp.push_back(*(it + 1));
 		vec.push_back(tmp);
 	}
-	for (size_t i = 0; i < vec.size(); i++)
+	for (std::vector<std::vector<int> >::iterator it = vec.begin(); it != vec.end(); it++)
 	{
-		if(vec[i][0] > vec[i][1])
-			std::swap(vec[i][0], vec[i][1]);
+		if(it[0][0] > it[0][1])
+			std::swap(it[0][0], it[0][1]);
 	}
 	sort_peers(vec);
 	std::vector<int> res;
 	std::vector<int> small_peers;
-	for (size_t i = 0; i < vec.size(); i++)
+	for (std::vector<std::vector<int> >::iterator it = vec.begin(); it != vec.end(); it++)
 	{
-		if(i == 0)
-			res.push_back(vec[i][0]);
-		res.push_back(vec[i][1]);
-		if(i != 0)
-			small_peers.push_back(vec[i][0]);
+		if(it == vec.begin())
+			res.push_back(it[0][0]);
+		res.push_back(it[0][1]);
+		small_peers.push_back(it[0][0]);
 	}
 	ford_insertion_sort(res, small_peers);
 	v = res;

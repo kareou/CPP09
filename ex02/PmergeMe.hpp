@@ -20,6 +20,7 @@
 # include <list>
 # include <sstream>
 # include<ctime>
+#include <cmath>
 
 void check_args(std::string input);
 void fill_vector(std::vector<int> &v, std::string input);
