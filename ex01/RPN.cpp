@@ -6,7 +6,7 @@
 /*   By: mkhairou <mkhairou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/23 11:21:52 by mkhairou          #+#    #+#             */
-/*   Updated: 2023/08/23 13:50:26 by mkhairou         ###   ########.fr       */
+/*   Updated: 2023/09/01 11:01:23 by mkhairou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,11 @@ RPN::~RPN()
 
 RPN &RPN::operator=(RPN const &cpy)
 {
-	(void)cpy;
+	if(this != &cpy)
+	{
+		_stack = cpy._stack;
+		_input = cpy._input;
+	}
 	return (*this);
 }
 

@@ -6,7 +6,7 @@
 /*   By: mkhairou <mkhairou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/23 11:21:54 by mkhairou          #+#    #+#             */
-/*   Updated: 2023/08/23 14:35:18 by mkhairou         ###   ########.fr       */
+/*   Updated: 2023/09/01 11:01:05 by mkhairou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@ private:
 public:
 	void readInput(std::string input);
 	void calculate();
-	RPN(/* args */);
 	RPN(RPN const &cpy);
 	RPN &operator=(RPN const &cpy);
+	RPN(/* args */);
 	~RPN();
 };
 

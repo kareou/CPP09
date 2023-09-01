@@ -6,7 +6,7 @@
 /*   By: mkhairou <mkhairou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/23 11:21:38 by mkhairou          #+#    #+#             */
-/*   Updated: 2023/08/23 11:24:57 by mkhairou         ###   ########.fr       */
+/*   Updated: 2023/09/01 12:22:33 by mkhairou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,10 @@ int BitcoinExchange::check_line(std::string key, int indecator)
         price.erase(std::remove(price.begin(), price.end(), ' '), price.end());
     }
     if (date == "" || price == "")
-        throw std::invalid_argument("Error: Bad input");
+    {
+        std::string tmp = (date == "" ? price : date);
+        throw std::invalid_argument("Error: Bad input => " + tmp);
+    }
     char *not_digit;
     strtod(date.c_str(), &not_digit);
     if (*not_digit != '\0' && *not_digit != '-')
@@ -117,7 +120,7 @@ int BitcoinExchange::check_line(std::string key, int indecator)
     if (*leftover != '\0')
         throw std::invalid_argument("Error: Bad price input");
     if (price_d < 0)
-        throw std::invalid_argument("Error: too large a number");
+        throw std::invalid_argument("Error: not a positive number");
     if (price_d > 1000 && indecator == 0)
         throw std::invalid_argument("Error: too large a number");
     return 0;
@@ -131,6 +134,11 @@ void BitcoinExchange::read_data(std::string filename)
     if (myfile.is_open())
     {
         std::getline(myfile, line);
+        if (line != "date | value")
+        {
+            std::cerr << "Error: Bad file format" << std::endl;
+            exit(1);
+        }
         while (std::getline(myfile, line))
         {
             try
@@ -142,7 +150,7 @@ void BitcoinExchange::read_data(std::string filename)
                 ss >> date;
                 ss >> price;
                 ss >> price;
-                std::cout << date + "=> " + price + " = ";
+                std::cout << date << " => " << price << " = ";
                 double total = get_price(date);
 
                 std::cout << total * std::strtod(price.c_str(), NULL) << std::endl;
@@ -158,6 +166,7 @@ void BitcoinExchange::read_data(std::string filename)
     else
     {
         std::cerr << "Unable to open file" << std::endl;
+        exit(1);
     }
 }
 
@@ -169,6 +178,11 @@ void BitcoinExchange::read_file()
     if (myfile.is_open())
     {
         std::getline(myfile, line);
+        if (line != "date,exchange_rate")
+        {
+            std::cerr << "Error: Bad file format" << std::endl;
+            exit(1);
+        }
         while (std::getline(myfile, line))
         {
             try
@@ -195,5 +209,6 @@ void BitcoinExchange::read_file()
     else
     {
         std::cerr << "Unable to open file" << std::endl;
+        exit(1);
     }
 }
